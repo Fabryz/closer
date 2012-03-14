@@ -1,7 +1,7 @@
 Closer
 ======
 
-Messing around with Google Maps
+Messing around with Google Maps, Node.js and Socket.io
 
 Requirements
 ------------
@@ -17,7 +17,7 @@ Modules:
 Installation
 ----------
 
-1. Clone the repository with ``git clone git://github.com/Fabryz/default.git YOUR_PROJECT_NAME``
+1. Clone the repository with ``git clone git://github.com/Fabryz/closer.git YOUR_PROJECT_NAME``
 2. Install dependencies with ``npm install``
 3. Start the server with ``node server.js``
 4. Point your browser to ``YOUR_SERVER_IP:8080``
