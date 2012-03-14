@@ -55,3 +55,18 @@ a {
 	color: #FFFFFF;
 	text-shadow: 1px 1px 1px #000000;
 }
+
+#force-send {
+	position: absolute;
+	top: 24px;
+	left: 150px;
+	z-index: 900;
+}
+
+.sent {
+	color: red;
+}
+
+.received {
+	color: blue;
+}

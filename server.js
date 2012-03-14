@@ -57,7 +57,7 @@ io.sockets.on('connection', function(client) {
 	client.on("coords", function(data) {		
 		//console.dir(data);
 		
-		io.sockets.emit("coords", { lat: data.lat, lon: data.lon, acc: data.acc });
+		io.sockets.emit("coords", { lat: data.latitude, lon: data.longitude, acc: data.accuracy });
 	});
 
 	client.on('disconnect', function() {

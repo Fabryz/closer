@@ -1,6 +1,6 @@
 {
   "name": "closer",
-  "version": "0.0.1-2",
+  "version": "0.0.1-5",
   "author": "Fabrizio Codello",
   "engines": {
     "node": "0.6.7"

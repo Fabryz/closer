@@ -54,25 +54,46 @@ $(document).ready(function() {
 		});
 	}
 
+	$("#force-send").on("click", function(e) {
+		console.log("click");
+		var gigi = navigator.geolocation.getCurrentPosition();
+
+		console.log(gigi);
+
+		sendcoords(gigi);
+	});
+
 	/* 
 	* Socket.io
 	*/
+
+	function sendCoords(coords) {
+		socket.emit("coords", { lat: coords.latitude, lon: coords.longitude, acc: coords.accuracy });
+	}
 	    
     socket.on('connect', function() {
     	status.html("Connected.");
 
     	if (navigator.geolocation) {
 			watchid = navigator.geolocation.watchPosition(function(position) {   
-				last_coords.lat = position.coords.latitude;
-				last_coords.lon = position.coords.longitude;
-			
-				var latlng = new google.maps.LatLng(last_coords.lat, last_coords.lon);
+				last_coords.latitude = position.coords.latitude;
+				last_coords.longitude = position.coords.longitude;
+				last_coords.accuracy = position.coords.accuracy;
 
-				$("#map_status").html(last_coords.lat +' '+ last_coords.lon +' '+ last_coords.acc);
+				$("h1").addClass("sent");
+				setTimeout(function() {
+		    		$("h1").removeClass("sent");
+		    	}, 300);
+			
+				var latlng = new google.maps.LatLng(last_coords.latitude, last_coords.longitude);
+
+				console.log(latlng);
+
+				$("#map_status").html(last_coords.latitude +' '+ last_coords.longitude +' '+ last_coords.accuracy);
 				map.setCenter(latlng);
 				setMarker(latlng);
 
-				socket.emit("coords", { lat: last_coords.lat, lon: last_coords.lon, acc: last_coords.acc});
+				sendCoords(last_coords);
 			}, function(err) {
 				$("#map_status").html("Error: see console.");
 				console.dir(err);
@@ -95,6 +116,14 @@ $(document).ready(function() {
 	});
 
 	socket.on('coords', function(data) {
-    	$("map_status").html(data.lat +" "+ data.lon +" "+ data.acc);
+		//TODO: Received coords from XYZ
+    	//$("map_status").html(data.lat +" "+ data.lon +" "+ data.acc);
+		var latlng = new google.maps.LatLng(data.latitude, data.longitude);
+    	setMarker(latlng);
+
+    	$("h1").addClass("received");
+    	setTimeout(function() {
+    		$("h1").removeClass("received");
+    	}, 300);
 	});
 });
