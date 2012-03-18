@@ -111,6 +111,7 @@ io.sockets.on('connection', function(client) {
 				players[i].lat = data.lat;
 				players[i].lng = data.lng;
 				players[i].acc = data.acc;
+				players[i].marker = data.marker;
 				break;
 			}
 		}

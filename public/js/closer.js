@@ -7,7 +7,7 @@ $(document).ready(function() {
 	function init() {
 		var latlng = new google.maps.LatLng(45.66629, 12.24207);
 		var myOptions = {
-			zoom: 19,
+			zoom: 16,
 			center: latlng,
 			mapTypeControl: true,
 			navigationControlOptions: { style: google.maps.NavigationControlStyle.SMALL },
@@ -16,7 +16,6 @@ $(document).ready(function() {
 		map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
 
 		map.setCenter(latlng);
-		setMarker(latlng);
 	}
 
 	function toggleDebug(spd) {
@@ -31,29 +30,36 @@ $(document).ready(function() {
 		}
 	}
 
-	function setMarker(latlng, id) {
-		var marker = new google.maps.Marker({
-			position: latlng, 
-			map: map, 
-			title: "You are here! (at least within a "+ latlng.acc +" meter radius)"
-		});
+	function setMarker(id, latlng) {
+		var length = players.length;
+		for(var i = 0; i < length; i++) {
+			if (players[i].id == id) {
+				var marker = new google.maps.Marker({
+					position: latlng, 
+					map: map, 
+					title: players[i].id
+				});
 
-		if (typeof id != undefined) {
-			var length = players.length;
-			for(var i = 0; i < length; i++) {
-				if (players[i].id == id) {
-					players[i].marker = marker;
-					if (player.id == id) {
-						player.marker = marker;
-					}
-					break;
+				if (typeof players[i].marker !== null) {
+					players[i].marker.setMap(null);
 				}
+				players[i].marker = marker;
+				if (player.id == id) {
+					if (typeof players[i].marker !== null) {
+						player.marker.setMap(null);
+					}
+					player.marker = marker;
+				}
+				break;
 			}
 		}
 	}
 
 	function sendCoords(coords) {
-		socket.emit("coords", { id: player.id, lat: coords.latitude, lon: coords.longitude, acc: coords.accuracy });
+		console.log("Sending:");
+		console.log(coords);
+
+		socket.emit("coords", { id: coords.id, lat: coords.lat, lon: coords.lng, acc: coords.acc, marker: coords.marker });
 
 		$("h1").addClass("sent");
 		setTimeout(function() {
@@ -73,7 +79,7 @@ $(document).ready(function() {
 				var latlng = new google.maps.LatLng(player.lat, player.lng);
 				console.log(latlng);
 				map.setCenter(latlng);
-				setMarker(latlng, player.id);
+				setMarker(player.id, latlng);
 
 				sendCoords(player);
 			}, function(err) {
@@ -119,7 +125,7 @@ $(document).ready(function() {
 				var latlng = new google.maps.LatLng(player.lat, player.lng);
 				console.log(latlng);
 				map.setCenter(latlng);
-				setMarker(latlng, player.id);
+				setMarker(player.id, latlng);
 
 				sendCoords(player);
 			}, function(err) {
@@ -159,10 +165,12 @@ $(document).ready(function() {
 	});
 
 	socket.on('coords', function(data) {
-		//TODO: Received coords from XYZ
+		console.log("Received:");
+		console.log(data);
+
     	//$("map_status").html(data.lat +" "+ data.lon +" "+ data.acc);
 		var latlng = new google.maps.LatLng(data.lat, data.lng);
-    	setMarker(latlng, id);
+    	setMarker(data.id, latlng);
 
     	$("h1").addClass("received");
     	setTimeout(function() {
@@ -177,6 +185,7 @@ $(document).ready(function() {
 		player.lat = data.player.lat;
 		player.lng = data.player.lng;
 		player.acc = data.player.acc;
+		player.marker = data.player.marker;
 
 		log('Received current player id: '+ player.id);
 		log('You have joined the server.');
@@ -203,8 +212,9 @@ $(document).ready(function() {
 		newPlayer.id = data.player.id;
 		newPlayer.nick = data.player.nick;
 		newPlayer.lat = data.player.lat;
-		newplayer.lng = data.player.lng;
+		newPlayer.lng = data.player.lng;
 		newPlayer.acc = data.player.acc;
+		newPlayer.marker = data.player.marker;
 
 		players.push(newPlayer);
 		log('New player joined: '+ newPlayer.nick);
@@ -220,9 +230,10 @@ $(document).ready(function() {
 			tmpPlayer.id = data.list[i].id;
 			tmpPlayer.nick = data.list[i].nick;
 			tmpPlayer.lat = data.list[i].lat;
-			tmpPlayer.lng = data.list[i].y;
+			tmpPlayer.lng = data.list[i].lng;
 			tmpPlayer.acc = data.list[i].acc;
 			tmpPlayer.ping = data.list[i].ping;
+			tmpPlayer.marker = data.list[i].marker;
 
 			players.push(tmpPlayer);
 			tmpPlayer = {};
