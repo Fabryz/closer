@@ -49,18 +49,27 @@ a {
 
 #map_status {
 	position: absolute;
-	top: 60px;
+	top: 56px;
 	left: 50px;
 	z-index: 900;
 	color: #FFFFFF;
 	text-shadow: 1px 1px 1px #000000;
 }
 
+.button {
+	position: absolute;
+	z-index: 999;
+}
+
 #force-send {
 	position: absolute;
-	top: 24px;
-	left: 150px;
-	z-index: 900;
+	top: 80px;
+	left: 50px;
+}
+
+#force-center {
+	top: 80px;
+	left: 120px;
 }
 
 .sent {
