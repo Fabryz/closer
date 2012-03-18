@@ -220,7 +220,7 @@ $(document).ready(function() {
 			tmpPlayer.id = data.list[i].id;
 			tmpPlayer.nick = data.list[i].nick;
 			tmpPlayer.lat = data.list[i].lat;
-			tmpplayer.lng = data.list[i].y;
+			tmpPlayer.lng = data.list[i].y;
 			tmpPlayer.acc = data.list[i].acc;
 			tmpPlayer.ping = data.list[i].ping;
 
